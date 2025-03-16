@@ -6,7 +6,7 @@ module register_File(CLK,rst,WE3,WD3,A1,A2,A3,RD1,RD2);
 
 
     reg [31:0] register [31:0];
-    always @ (posedge CLK)
+    always @ (negedge CLK)
     begin 
         if(WE3 & (A3 != 5'h0))
             register[A3] <= WD3;
