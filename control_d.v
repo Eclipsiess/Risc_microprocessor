@@ -35,7 +35,7 @@ wire [1:0] ResultSrcD;
 wire [2:0] ALUControlD;
 maindec dec1(op,ResultSrcD,MemWriteD,BranchD, ALUSrcD,RegWriteD, JumpD,
    ImmSrcD,ALUOp);
-aludec dec2(op[5], funct3, funct7, ALUOp,ALUControlD);
+   aludec dec2(op[5], funct3, funct7, ALUOp,ALUControlD);
 always @(posedge clk, posedge reset)
 begin
 if(reset|clr)
