@@ -24,7 +24,7 @@ module Fetch_reg(clk, reset, FlushD, StallD,RD, PCF, PCPlus4F, InstrD, PCD, PCPl
 input clk, reset, FlushD,StallD;
 input[31:0] RD, PCF, PCPlus4F;
 output reg [31:0] InstrD, PCD, PCPlus4D;
-    always @(posedge clk or posedge reset or posedge FlushD or posedge StallD)
+    always @(posedge clk or posedge reset)
      begin
         if (reset | FlushD) begin
             InstrD <= 0;
