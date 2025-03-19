@@ -5,7 +5,7 @@ module data_Path (CLK,rst,InstrD,PCD,PCPlus4D,RegWriteW,RDW,ResultW,ForwardA_E,F
     input [31:0] InstrD, PCD, PCPlus4D, ResultW;
     input [1:0] ForwardA_E, ForwardB_E;
     input [2:0] ALUControlE;
-    output ZeroE
+    output ZeroE;
     output [4:0] RD_M; 
     output [31:0] PCPlus4M, WriteDataM, ALU_ResultM;
     output [31:0] PCTargetE;
