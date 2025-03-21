@@ -1,16 +1,18 @@
-module data_Path (CLK,rst,InstrD,ImmSrcD,PCD,PCPlus4D,RS1_E, 
-RS2_E, RD_E,RegWriteW,RDW,ResultW,flushE,ForwardA_E,ForwardB_E,
-ALUControlE,ALUSrcE, RD_M,PCPlus4M, WriteDataM, ALU_ResultM,
+module data_Path (CLK,rst,InstrD,ImmSrcD,PCD,PCPlus4D,RS1_E,ResultSrcW,RD,
+RS2_E, RD_E,RegWriteW,flushE,ForwardA_E,ForwardB_E,
+ALUControlE,ALUSrcE, RD_M,PCPlus4M, WriteDataM, ALU_ResultM,RDW,
 PCTargetE,ZeroE);
     input CLK, rst, RegWriteW,ALUSrcE, flushE;
-    input [4:0] RDW;
-    input [31:0] InstrD, PCD, PCPlus4D, ResultW;
-    input [1:0] ForwardA_E, ForwardB_E,ImmSrcD;
+    input [31:0] InstrD, PCD, PCPlus4D,RD;
+    input [1:0] ForwardA_E, ForwardB_E,ImmSrcD,ResultSrcW;
     input [2:0] ALUControlE;
     output ZeroE;
     output [4:0] RD_M,RS1_E, RS2_E, RD_E; 
-    output [31:0] PCPlus4M, WriteDataM, ALU_ResultM;
     output [31:0] PCTargetE;
+    output [4:0] RDW;
+    output [31:0] PCPlus4M, WriteDataM, ALU_ResultM;
+    wire [31:0] ResultW;
+    
 
     // Wires
     wire [31:0] RD1_D, RD2_D, Imm_Ext_D;
@@ -19,6 +21,8 @@ PCTargetE,ZeroE);
     wire [31:0] Src_A, Src_B_inter, Src_B;
     wire [31:0] ResultE;
     wire ZeroE1;
+    wire [31:0] PCPlus4W, WriteDataW, ALUResultW,ReadDataW;
+
 
 
     // Register
@@ -104,7 +108,7 @@ PCTargetE,ZeroE);
             .b(Imm_Ext_E),
             .y(PCTargetE)
             );
-    always @(posedge CLK or negedge rst) begin
+    always @(posedge CLK or posedge rst) begin
         if(rst == 1'b0) begin
             RD_E_r <= 5'h00;
             PCPlus4E_r <= 32'h00000000; 
@@ -119,6 +123,7 @@ PCTargetE,ZeroE);
             ResultE_r <= ResultE;
         end
     end
+    
 
     // Output Assignments
     assign ZeroE = ZeroE1;
@@ -126,5 +131,16 @@ PCTargetE,ZeroE);
     assign PCPlus4M = PCPlus4E_r;
     assign WriteDataM = RD2_E_r;
     assign ALU_ResultM = ResultE_r;
+    flopr  #(101) regW(CLK, rst,{ALU_ResultM, RD ,RD_M, PCPlus4M}, {ALUResultW, ReadDataW, RDW, PCPlus4W});
+    Mux3 resulta(
+                        .a(ALUResultW),
+                        .b(ReadDataW),
+                        .c(PCPlus4W),
+                        .s(ResultSrcW),
+                        .d(ResultW)
+                        );
 
 endmodule
+
+
+
