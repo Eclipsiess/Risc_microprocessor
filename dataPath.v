@@ -1,19 +1,20 @@
-module data_Path (clk,rst,InstrD,PCD,PCPlus4D,RegWriteW,RDW,ResultW,ForwardA_E,ForwardB_E,ALUControlE,ALUSrcE,
-  RD_M,PCPlus4M, WriteDataM, ALU_ResultM,PCTargetE,ZeroE);
-    input clk, rst, RegWriteW,ALUSrcE;
+module data_Path (CLK,rst,InstrD,ImmSrcD,PCD,PCPlus4D,RS1_E, 
+RS2_E, RD_E,RegWriteW,RDW,ResultW,flushE,ForwardA_E,ForwardB_E,
+ALUControlE,ALUSrcE, RD_M,PCPlus4M, WriteDataM, ALU_ResultM,
+PCTargetE,ZeroE);
+    input CLK, rst, RegWriteW,ALUSrcE, flushE;
     input [4:0] RDW;
     input [31:0] InstrD, PCD, PCPlus4D, ResultW;
-    input [1:0] ForwardA_E, ForwardB_E;
+    input [1:0] ForwardA_E, ForwardB_E,ImmSrcD;
     input [2:0] ALUControlE;
     output ZeroE;
-    output [4:0] RD_M; 
+    output [4:0] RD_M,RS1_E, RS2_E, RD_E; 
     output [31:0] PCPlus4M, WriteDataM, ALU_ResultM;
     output [31:0] PCTargetE;
 
     // Wires
     wire [31:0] RD1_D, RD2_D, Imm_Ext_D;
     wire [31:0] RD1_E, RD2_E, Imm_Ext_E;
-    wire [4:0] RS1_E, RS2_E, RD_E;
     wire [31:0] PCE, PCPlus4E;
     wire [31:0] Src_A, Src_B_inter, Src_B;
     wire [31:0] ResultE;
@@ -32,16 +33,16 @@ module data_Path (clk,rst,InstrD,PCD,PCPlus4D,RegWriteW,RDW,ResultW,ForwardA_E,F
 
 
 
-    register_File reg(
-        .CLK(clk),rst(rst),WE3(RegWriteW),.WD3(ResultW),.A1(InstrD[19:15]),.A2(InstrD[24:20]),.A3(RDW),.RD1(RD1_D),.RD2(RD2_D)
+    register_File reg1(
+        .CLK(CLK),.rst(rst),.WE3(RegWriteW),.WD3(ResultW),.A1(InstrD[19:15]),.A2(InstrD[24:20]),.A3(RDW),.RD1(RD1_D),.RD2(RD2_D)
     );
 
     extend ext(
-        .In(InstrD[31:0]), .ImmSrcD(ImmSrcD) , .ImmExt1D(Imm_Ext_D)
+        .instr(InstrD), .immsrc(ImmSrcD) , .immext(Imm_Ext_D)
     );
 
-    always @(posedge clk or posedge rst) begin
-        if(rst == 1'b0) begin
+    always @(posedge CLK or posedge rst) begin
+        if(rst == 1'b0 | flushE) begin
             RD1_D_r <= 32'h00000000; 
             RD2_D_r <= 32'h00000000; 
             Imm_Ext_D_r <= 32'h00000000;
@@ -96,14 +97,14 @@ module data_Path (clk,rst,InstrD,PCD,PCPlus4D,RegWriteW,RDW,ResultW,ForwardA_E,F
             .SrcBE(Src_B),
             .ALUResult(ResultE),
             .ALUControlE(ALUControlE),
-            .Zero(ZeroE1),
+            .ZeroE(ZeroE1)
             );
-    PC_Adder branch_adder (
+    pcAdder branch_adder (
             .a(PCE),
             .b(Imm_Ext_E),
-            .c(PCTargetE)
+            .y(PCTargetE)
             );
-    always @(posedge clk or negedge rst) begin
+    always @(posedge CLK or negedge rst) begin
         if(rst == 1'b0) begin
             RD_E_r <= 5'h00;
             PCPlus4E_r <= 32'h00000000; 
