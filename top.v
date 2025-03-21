@@ -20,19 +20,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module top(input clk, reset);
-wire FlushE,StallD,FlushD,StallF, ZeroE, ALUSrcE, PCSrcE, RegWriteM, RegWriteW, memWriteM ;
+module top(input clk, reset, output memWriteM, output [31:0] ALUResultM, writeDataM, readDataM, pcF, InstrF  );
+wire FlushE,StallD,FlushD,StallF, ZeroE, ALUSrcE, PCSrcE, RegWriteM, RegWriteW ;
 wire [1:0] ImmSrcD, ResultSrcE, ALUControlE, ResultSrcW, ForwardAE, ForwardBE;
-wire [31:0] InstrD, PCD, PCPlus4D, readDataM, InstrF, pcF, ALUResultM, writeDataM, PCTargetE; 
+wire [31:0] InstrD, PCD, PCPlus4D, PCTargetE, PCPlus4M; 
 wire [4:0] RS1E, RS2E,RDE, RDW, RDM ;
 
     
 Controller controller1(clk, reset, FlushE,ZeroE, InstrD, ImmSrcD, ALUSrcE,
 PCSrcE, ResultSrcE, ALUControlE,memWriteM,RegWriteM, RegWriteW, ResultSrcW);
 
-data_Path DataPath1(clk,reset,InstrD,ImmSrcD,PCD,PCPlus4D,RS1E, 
-RS2E, RDE,RegWriteW,RDW,ResultW,FlushE,ForwardAE,ForwardBE,
-ALUControlE,ALUSrcE, RDM,PCPlus4M, writeDataM, ALUResultM,
+
+data_Path dataPath(clk,reset,InstrD,ImmSrcD,PCD,PCPlus4D,RS1E,ResultSrcW,readDataM,
+RS2E, RDE,RegWriteW,FlushE,ForwardAE,ForwardBE,
+ALUControlE,ALUSrcE, RDM,PCPlus4M, writeDataM, ALUResultM,RDW,
 PCTargetE,ZeroE);
 
 Hazard hazard_unit(RegWriteW, RDW, RegWriteM, RDM, ResultSrcE, ForwardBE, ForwardAE, PCSrcE,
@@ -44,7 +45,6 @@ fetch Fetch(clk, reset,PCSrcE, StallF,StallD, FlushD, InstrF, pcF,PCTargetE,
 Data_Memory dmem(clk, reset, memWriteM,
     ALUResultM, writeDataM,readDataM);
     
-imem(pcF, InstrF); 
+imem imem1(pcF, InstrF); 
 endmodule
-
 
