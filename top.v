@@ -22,7 +22,8 @@
 
 module top(input clk, reset, output memWriteM, output [31:0] ALUResultM, writeDataM, readDataM, pcF, InstrF  );
 wire FlushE,StallD,FlushD,StallF, ZeroE, ALUSrcE, PCSrcE, RegWriteM, RegWriteW ;
-wire [1:0] ImmSrcD, ResultSrcE, ALUControlE, ResultSrcW, ForwardAE, ForwardBE;
+wire [1:0] ImmSrcD, ResultSrcE,ResultSrcW, ForwardAE, ForwardBE;
+wire [2:0] ALUControlE;
 wire [31:0] InstrD, PCD, PCPlus4D, PCTargetE, PCPlus4M; 
 wire [4:0] RS1E, RS2E,RDE, RDW, RDM ;
 
@@ -47,4 +48,5 @@ Data_Memory dmem(clk, reset, memWriteM,
     
 imem imem1(pcF, InstrF); 
 endmodule
+
 
