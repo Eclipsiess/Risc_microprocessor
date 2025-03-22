@@ -14,10 +14,6 @@ module Data_Memory(
             memory[A] <= WD;
     end
 
-    assign RD = (rst) ? 32'd0 : memory[A];
-
-    initial begin
-        memory[0] = 32'h00000000;
-    end
+    assign RD = memory[A];
 
 endmodule
