@@ -1,21 +1,21 @@
-00500113  
-00C00193  
-FF718393  
-0023E233  
-0041F2B3  
-004282B3  
-02728863  
-0041A233  
-00020463  
-00000293  
-0023A233  
-005203B3  
-402383B3  
-0471AA23  
-06002103  
-005104B3  
-008001EF  
-00100113  
-00910133  
-0221A023  
-00210063  
+00500113  # addi x2, x0, 5       # x2 = 5
+00C00193  # addi x3, x0, 12      # x3 = 12
+FF718393  # addi x7, x3, -9      # x7 = x3 - 9
+0023E233  # or x4, x7, x2        # x4 = x7 | x2
+0041F2B3  # and x5, x3, x4       # x5 = x3 & x4
+004282B3  # mul x5, x5, x4       # x5 = x5 * x4 (if multiplication extension is enabled)
+02728863  # beq x5, x7, 0x27     # if x5 == x7, branch to address PC+0x27
+0041A233  # sw x4, 0(x3)         # Store x4 at memory address x3 + 0
+00020463  # beq x4, x0, 8        # if x4 == 0, branch forward 8 bytes
+00000293  # addi x5, x0, 0       # x5 = 0
+0023A233  # sw x2, 4(x7)         # Store x2 at memory address x7 + 4
+005203B3  # add x7, x4, x5       # x7 = x4 + x5
+402383B3  # sub x7, x7, x2       # x7 = x7 - x2
+0471AA23  # sw x7, 84(x3)        # Store x7 at memory address x3 + 84
+06002103  # lw x2, 96(x0)        # Load word into x2 from memory address 96
+005104B3  # xor x9, x2, x5       # x9 = x2 ^ x5
+008001EF  # jal x3, 8            # Jump and link: x3 = PC+4, PC += 8
+00100113  # addi x2, x0, 1       # x2 = 1
+00910133  # add x2, x2, x9       # x2 = x2 + x9
+0221A023  # sw x2, 32(x3)        # Store x2 at memory address x3 + 32
+00210063  # beq x2, x2, 4        # Unconditional branch (always taken) to PC + 4
