@@ -45,3 +45,5 @@ always @(negedge clk) begin
             $stop;
         end
     end
+end
+endmodule
